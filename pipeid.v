@@ -16,6 +16,12 @@ output wire[31:0] da,db,dimm,bpc,jpc;
 output wire[4:0] drn;
 output wire[1:0] pcsource;
 
+wire dregrt,sext; //from CU.
+
+wire dwreg_tmp,dm2reg_tmp,dwmem_tmp,daluimm_tmp,dshift_tmp,djal_tmp;
+wire[3:0] daluc_tmp;
+wire[4:0] drn_tmp;
+
 //case add $1,$1,$2; beq $1,$2,...
 //da,db have value immediately after EX calculation+MUX. No need to wait for RF.
 //Thus such z calculation is reliable. CU will give response to IF in time.
@@ -29,11 +35,18 @@ wire[4:0] rd = inst[15:11];
 
 wire[31:0] rf_outa, rf_outb;
 
-pipecu cu(op, func, z, dwmem, dwreg, dregrt, dm2reg, daluc, dshift,
-              daluimm, pcsource, djal, sext);
+pipecu cu(op, func, z, dwmem_tmp, dwreg_tmp, dregrt, dm2reg_tmp, daluc_tmp, dshift_tmp,
+              daluimm_tmp, pcsource, djal_tmp, sext);
 
 regfile rf(rs,rt,wdi,wrn,wwreg,clock,resetn,rf_outa,rf_outb);
 
+assign dwreg = wpcir?dwreg_tmp:1'b0;
+assign dm2reg = wpcir?dm2reg_tmp:1'b0;
+assign dwmem = wpcir?dwmem_tmp:1'b0;
+assign daluimm = wpcir?daluimm_tmp:1'b0;
+assign dshift = wpcir?dshift_tmp:1'b0;
+assign djal = wpcir?djal_tmp:1'b0;
+assign daluc = wpcir?daluc_tmp:4'b0;
 assign drn = dregrt?rt:rd;
 assign jpc = {dpc4[31:28],inst[25:0],1'b0,1'b0};
 wire e = sext&inst[15];
@@ -47,10 +60,10 @@ assign bpc = dpc4 + offset;
 //forwarding: 2 instructions before, R-type => malu(ready before negedge of system clock)
 wire[1:0] fwda, fwdb;
 assign fwda[0] = (ewreg&~em2reg&ern==rs&ern!=0) | (mm2reg&mrn==rs&mrn!=0);
-assign fwda[1] = (mwreg&~mm2reg&mrn==rs&mrn!=0) | (mm2reg&mrn==rs&mrn!=0);
+assign fwda[1] = (mwreg&~mm2reg&mrn==rs&ern!=rs&mrn!=0) | (mm2reg&mrn==rs&mrn!=0); //modified ern==rs will cause error.
 assign fwdb[0] = (ewreg&~em2reg&ern==rt&ern!=0) | (mm2reg&mrn==rt&mrn!=0);
-assign fwdb[1] = (mwreg&~mm2reg&mrn==rt&mrn!=0) | (mm2reg&mrn==rt&mrn!=0);
-//although mmo is possible output, m2reg will still cause a bubble.
+assign fwdb[1] = (mwreg&~mm2reg&mrn==rt&ern!=rt&mrn!=0) | (mm2reg&mrn==rt&mrn!=0); //modified ern==rs will cause error.
+
 mux4x32 forwarding_da(rf_outa,ealu,malu,mmo,fwda,da);
 mux4x32 forwarding_db(rf_outb,ealu,malu,mmo,fwdb,db);
 //DON'T HAVE TO STOP: 2 instructions before.
