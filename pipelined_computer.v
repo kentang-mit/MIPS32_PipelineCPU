@@ -43,7 +43,7 @@ module pipelined_computer(resetn,clock,mem_clock,pc,inst,ealu,malu,walu);
 	pipeexe exe_stage(ealuc,ealuimm,ea,eb,eimm,eshift,ern0,epc4,ejal,ern,ealu);
 	pipeemreg em_reg(ewreg,em2reg,ewmem,ealu,eb,ern,clock,resetn,mwreg,
 		mm2reg,mwmem,malu,mb,mrn);
-	pipemem mem_stage(mwmem,malu,mb,clock,mem_clock,mmo);
+	pipemem mem_stage(mwmem,malu,mb,wmo,wm2reg,clock,mem_clock,mmo);
 	pipemwreg mw_reg(mwreg,mm2reg,mmo,malu,mrn,clock,resetn,wwreg,
 		wm2reg,wmo,walu,wrn);
 	mux2x32 wb_stage(walu,wmo,wm2reg,wdi);

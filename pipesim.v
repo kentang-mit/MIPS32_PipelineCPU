@@ -1,5 +1,4 @@
-`timescale 1ps/1ps
-
+`timescale 10ps/1ps
 
 module pipecomputer_sim;
 

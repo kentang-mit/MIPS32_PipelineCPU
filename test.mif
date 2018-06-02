@@ -1,0 +1,34 @@
+DEPTH = 64; % Memory depth and width are required %
+WIDTH = 32; % Enter a decimal number %
+ADDRESS_RADIX = HEX; % Address and value radixes are optional %
+DATA_RADIX = HEX; % Enter BIN, DEC, HEX, or OCT; unless %
+% otherwise specified, radixes = HEX %
+CONTENT
+BEGIN
+0 : 0c000002; % jal 2 %
+1 : 08000001; % j 1 %
+2 : 20010001; % addi $1,$0,1 %
+3 : 20020002; % addi $2,$0,2 %
+4 : 20030003; % addi $3,$0,3 %
+5 : 00222020; % add $4,$1,$2 %
+6 : 00242820; % add $5,$1,$4 %
+7 : 00853820; % add $7,$4,$5 %
+8 : 20a50010; % addi $5,$5,10 %
+9 : 20060080; % addi $6,$0,80 %
+A : 8cc50000; % lw $5,0($6) %
+B : 00a52820; % add $5,$5,$5 %
+C : 00a52820; % add $5,$5,$5 %
+D : 20a50001; % addi $5,$5,1 %
+E : 20040003; % addi $4,$0,3 %
+F : 10800007; % beq $4,$0,7 %
+10 : 20060004; % addi $6,$0,4 %
+11 : 20a50001; % addi $5,$5,1 %
+12 : acc50000; % sw $5,0($6) %
+13 : 8cc50000; % lw $5,0($6) %
+14 : acc50000; % sw $5,0($6) %
+15 : 2084ffff; % addi $4,$4,-1 %
+16 : 0800000f; % j 15 %
+17 : 20000001; % addi $0,$0,1 %
+18 : 00050020; % add $0,$0,$5 %
+19 : 03e00008; % jr $31 %
+END;

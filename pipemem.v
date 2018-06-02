@@ -1,10 +1,11 @@
-module pipemem(mwmem,malu,mb,clock,mem_clock,mmo);
-input wire mwmem;
-input wire[31:0] malu,mb;
+module pipemem(mwmem,malu,mb,wmo,wm2reg,clock,mem_clock,mmo);
+input wire mwmem,wm2reg;
+input wire[31:0] malu,mb,wmo;
 input wire clock, mem_clock;
 output wire[31:0] mmo;
 //malu: address mb: data
-
-ram  dram(malu[6:2],mem_clk,mb,mwmem,mmo);
+wire [31:0] datain;
+assign datain = wm2reg?wmo:mb;
+ram  dram(malu[6:2],mem_clk,datain,mwmem,mmo);
 
 endmodule
