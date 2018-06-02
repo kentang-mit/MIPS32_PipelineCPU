@@ -20,7 +20,7 @@ begin
 		inst <= ins;
 		end
 		else begin
-			inst <= 0;
+			inst <= ins;
 		end
 	end
 end

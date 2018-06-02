@@ -6,6 +6,6 @@ output wire[31:0] mmo;
 //malu: address mb: data
 wire [31:0] datain;
 assign datain = wm2reg?wmo:mb;
-ram  dram(malu[6:2],mem_clk,datain,mwmem,mmo);
+ram  dram(malu[6:2],mem_clock,datain,mwmem,mmo);
 
 endmodule

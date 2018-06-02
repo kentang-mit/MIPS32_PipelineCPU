@@ -72,7 +72,7 @@ mux4x32 forwarding_db(rf_outb,ealu,malu,mmo,fwdb,db);
 //have to stop: 1 instruction before, lw(this instruction in EX stage, not so good)
 
 //assign wpcir = ~ ( (mm2reg & ((mrn==rs)|(mrn==rt))) | (em2reg & ((ern==rs)|(ern==rt))) );
-assign wpcir = ~(em2reg & ((ern==rs)|(ern==rt)));
+assign wpcir = ~(em2reg & ((ern==rs)|(ern==rt)) & ~dwmem_tmp);
 //control hazards:
 //need to flush when j/jal/beq/bne. pc<=npc at next cycle!!
 
