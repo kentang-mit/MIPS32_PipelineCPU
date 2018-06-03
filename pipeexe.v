@@ -9,7 +9,7 @@ output wire[31:0] ealu, epc4;
 //ealu is the output of pipeexe stage. Note that it can be pc+4.
 
 wire [31:0] alua,alub,aluout;
-mux2x32 alu_a(ea,eimm,ealuimm,alua);
+//mux2x32 alu_a(ea,eimm,ealuimm,alua);
 mux2x32 alu_b(eb,eimm,ealuimm,alub);
 alu al_unit(ea,alub,ealuc,aluout);
 mux2x32 call_sub(aluout,epc4,ejal,ealu);

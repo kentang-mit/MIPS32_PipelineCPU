@@ -52,8 +52,8 @@ module pipecomputer_sim;
         begin
             in_port0_sim = 0;
             in_port1_sim = 0;
-            #5 in_port0_sim = 6;
-            #6 in_port1_sim = 11;
+            #5 in_port0_sim = 15;
+            #6 in_port1_sim = 13;
         end
 
 

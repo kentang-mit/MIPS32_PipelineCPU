@@ -28,6 +28,12 @@ module pipecu (op, func, z, wmem, wreg, regrt, m2reg, aluc, shift,
                 func[1] & func[0]; //000011
    wire i_jr  = r_type & ~func[5] & ~func[4] & func[3] & ~func[2] &
                 ~func[1] & ~func[0]; //001000
+   wire i_sllv = r_type & ~func[5] & ~func[4] & ~func[3] & func[2] &
+                ~func[1] & ~func[0];//000100
+   wire i_srlv = r_type & ~func[5] & ~func[4] & ~func[3] & func[2] &
+                func[1] & ~func[0];//000110
+   wire i_srav = r_type & ~func[5] & ~func[4] & ~func[3] & func[2] &
+                func[1] & func[0];//000111
   
    //Note: here, op[i] instead of func[i].
    wire i_addi = ~op[5] & ~op[4] &  op[3] & ~op[2] & ~op[1] & ~op[0]; //001000
@@ -52,12 +58,12 @@ module pipecu (op, func, z, wmem, wreg, regrt, m2reg, aluc, shift,
                  i_ori | i_xori | i_lw | i_lui  | i_jal;
    
    //aluc +:0000, -:x100 and:x001 or:x101 xor:x010 lui: x110 sll:0011 srl:0111 sra:1111
-   //Note: bne, beq == xor
-   assign aluc[3] = i_sra;
-   assign aluc[2] = i_or | i_ori | i_lui | i_srl | i_sra | i_sub;
-   assign aluc[1] = i_beq | i_bne | i_xor | i_xori | i_lui | i_sll | i_srl | i_sra;
-   assign aluc[0] = i_and | i_andi | i_or | i_ori | i_sll | i_srl | i_sra;
-   assign shift   = i_sll | i_srl | i_sra ;
+   //Note: bne, beq == xor, sllv=sll, srlv=srl, srav=sra;
+   assign aluc[3] = i_sra | i_srav;
+   assign aluc[2] = i_or | i_ori | i_lui | i_srl | i_sra | i_srlv | i_srav | i_sub;
+   assign aluc[1] = i_beq | i_bne | i_xor | i_xori | i_lui | i_sll | i_srl | i_sra | i_sllv | i_srlv | i_srav;
+   assign aluc[0] = i_and | i_andi | i_or | i_ori | i_sll | i_srl | i_sra | i_sllv | i_srlv | i_srav;
+   assign shift   = i_sll | i_srl | i_sra | i_sllv | i_srlv | i_srav ;
 
    assign aluimm  = i_addi | i_andi | i_ori | i_xori | i_lw | i_sw; // All I-type(except LUI?). J-type is processed individually.
    assign sext    = i_addi | i_lw | i_sw | i_beq | i_bne;//arithmetic I-type(NOTE logical unnecessary)

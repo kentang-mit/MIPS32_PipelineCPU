@@ -32,6 +32,7 @@ wire[5:0] func = inst[5:0];
 wire[4:0] rs = inst[25:21];
 wire[4:0] rt = inst[20:16];
 wire[4:0] rd = inst[15:11];
+wire [31:0] sa = { 27'b0, inst[10:6] }; // extend to 32 bits from sa for shift instruction
 
 wire[31:0] rf_outa, rf_outb;
 
@@ -64,7 +65,9 @@ assign fwda[1] = (mwreg&~mm2reg&mrn==rs&ern!=rs&mrn!=0) | (mm2reg&mrn==rs&mrn!=0
 assign fwdb[0] = (ewreg&~em2reg&ern==rt&ern!=0) | (mm2reg&mrn==rt&mrn!=0);
 assign fwdb[1] = (mwreg&~mm2reg&mrn==rt&ern!=rt&mrn!=0) | (mm2reg&mrn==rt&mrn!=0); //modified ern==rs will cause error.
 
-mux4x32 forwarding_da(rf_outa,ealu,malu,mmo,fwda,da);
+wire[31:0] da_tmp;
+assign da_tmp = dshift?sa:rf_outa;
+mux4x32 forwarding_da(da_tmp,ealu,malu,mmo,fwda,da);
 mux4x32 forwarding_db(rf_outb,ealu,malu,mmo,fwdb,db);
 //DON'T HAVE TO STOP: 2 instructions before.
 //mmo is used for updating "npc" in IF stage potentially. However, npc need to be ready before the next cycle, the time
