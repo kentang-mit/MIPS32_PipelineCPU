@@ -15,7 +15,8 @@ module pipecomputer_sim;
 	 
 	       
 //	 wire   [31:0]  in_port0_sim,in_port1_sim;
-	 
+	 wire [6:0] hex0_sim,hex1_sim;
+     reg[3:0] in_port0_sim,in_port1_sim;
 	 wire   [31:0]  pc_sim,inst_sim,aluout_sim,memout_sim;
     wire           imem_clk_sim,dmem_clk_sim;
     //wire   [31:0]  out_port0_sim,out_port1_sim;
@@ -26,7 +27,7 @@ module pipecomputer_sim;
     wire           wmem_sim;   // connect the cpu and dmem. 
     wire [31:0] ealu_sim, malu_sim, walu_sim;
 
-  pipelined_computer pc(resetn_sim,clock_50M_sim,mem_clk_sim,pc_sim,inst_sim,ealu_sim,malu_sim,walu_sim);
+  pipelined_computer pc(resetn_sim,clock_50M_sim,mem_clk_sim,in_port0_sim,in_port1_sim,pc_sim,inst_sim,ealu_sim,malu_sim,walu_sim,hex0_sim,hex1_sim);
 
 	 initial
         begin
@@ -47,7 +48,13 @@ module pipecomputer_sim;
                #1  resetn_sim = 1;
         end
 	 
-
+        initial
+        begin
+            in_port0_sim = 0;
+            in_port1_sim = 0;
+            #5 in_port0_sim = 6;
+            #6 in_port1_sim = 11;
+        end
 
 
 		  
